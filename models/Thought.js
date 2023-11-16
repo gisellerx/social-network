@@ -35,10 +35,10 @@ videoSchema
   .virtual('reactionCount')
   // Getter
   .get(function () {
-    return this.responses.length;
+    return this.reactions.length;
   });
 
 // Initialize our Video model
-const Video = model('video', videoSchema);
+const Thought = model('thought', videoSchema);
 
-module.exports = Video;
+module.exports = Thought;
