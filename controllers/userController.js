@@ -4,7 +4,7 @@ const Thought = require('../models/Thought');
 module.exports = {
   async getUsers(req, res) {
     try {
-      const users = await User.find();
+      const users = await User.find().populate("thoughts").populate("friends")
       res.json(users);
     } catch (err) {
       res.status(500).json(err);
@@ -13,8 +13,8 @@ module.exports = {
   async getSingleUser(req, res) {
     try {
       const user = await User.findOne({ _id: req.params.userId })
-        .select('-__v');
-
+        .select('-__v')
+        .populate("thoughts").populate("friends");
       if (!user) {
         return res.status(404).json({ message: 'No user with that ID' });
       }
@@ -55,10 +55,6 @@ module.exports = {
     try {
       const thought = await Thought.findOneAndRemove({ username: req.body.username });
 
-      if (!thought) {
-        return res.status(404).json({ message: 'No thought with this id!' });
-      }
-
       const user = await User.findOneAndRemove(
         { _id: req.params.userId },
         { new: true }
@@ -67,10 +63,10 @@ module.exports = {
       if (!user) {
         return res
           .status(404)
-          .json({ message: 'Video created but no user with this id!' });
+          .json({ message: 'No user with this id!' });
       }
 
-      res.json({ message: 'Video successfully deleted!' });
+      res.json({ message: 'User successfully deleted!' });
     } catch (err) {
       res.status(500).json(err);
     }
